@@ -1,0 +1,149 @@
+#include <iostream>
+#include <vector>
+#include <string>
+#include <algorithm>
+using namespace std;
+
+class Solicitud {
+public:
+    string nombreAlumno;
+    string nombreCarrera;
+    string nombrePreparatoria;
+    float promedioPreparatoria;
+
+    Solicitud() : nombreAlumno(), nombreCarrera(), nombrePreparatoria(), promedioPreparatoria(0.0) {}
+//CONSTRUC
+    Solicitud(const string& nombreAlumno, const string& nombreCarrera, const string& nombrePreparatoria, float promedioPreparatoria):
+        nombreAlumno(nombreAlumno),
+        nombreCarrera(nombreCarrera),
+        nombrePreparatoria(nombrePreparatoria),
+        promedioPreparatoria(promedioPreparatoria)
+        {}
+};
+
+
+class ListaSolicitudes {
+private:
+    //VECTOR-CONTENEDOR DE PLANTILLA
+    vector<Solicitud> solicitudes;
+
+public:
+    void altaSolicitud(const Solicitud& solicitud) {
+        solicitudes.push_back(solicitud);
+        // SE AGREGA Y SE ORDENA
+        ordenarSolicitudes();
+    }
+
+
+    //ALGORITMO DE INSERCION PARA ORDENAR SOLIS
+
+    void ordenarSolicitudes()
+    {
+
+        int n = solicitudes.size();
+        int i, j;
+        Solicitud aux;
+        for (i = 1; i < n; i++) {
+            aux = solicitudes[i];
+            j = i;
+            while (j > 0 && aux.promedioPreparatoria < solicitudes[j - 1].promedioPreparatoria) {
+                solicitudes[j] = solicitudes[j - 1];
+                j--;
+            }
+            solicitudes[j] = aux;
+        }
+    }
+    // FIN DEL ALGORITMO PARA ORDENAR SOLIS
+
+    void buscarSolicitud(const string& nombreAlumno)
+
+    {
+        int indice = busquedaBinaria(nombreAlumno);
+        if (indice != -1) {
+            cout<< "\nLA SOLICITUD SE ENCUENTRA EN LA POSICION: " << indice + 1 << ":\n"//MAS 1
+                << "NOMBRE ALUMNO: " << solicitudes[indice].nombreAlumno << "\n"
+                << "CARREA: " << solicitudes[indice].nombreCarrera << "\n"
+                << "PREPA: " << solicitudes[indice].nombrePreparatoria << "\n"
+                << "PROMEDIO: " << solicitudes[indice].promedioPreparatoria << "\n"
+                << "LUGAR EN LA LISTA: " << indice + 1 << "\n";
+        }
+        else
+        {
+            cout << "SOLICITUD NO ENCONTRADA\n";
+        }
+    }
+
+private:
+    //BUSQUEDA BINARIA
+    int busquedaBinaria(const string& nombreAlumno) {
+        int inicio = 0;
+        int fin = solicitudes.size() - 1;
+        while (inicio <= fin) {
+        int medio = (inicio + fin) / 2;
+        if (solicitudes[medio].nombreAlumno == nombreAlumno)
+            {
+                return medio;
+
+            }
+            else if (nombreAlumno < solicitudes[medio].nombreAlumno)
+            {
+                fin = medio - 1;
+            }
+            else
+            {
+                inicio = medio + 1;
+            }
+        }
+        return -1; // NO
+    }
+};
+
+int main() {
+    ListaSolicitudes lista;
+    int opcion;
+
+    do {
+        cout<< "\nMENU:\n"
+            << "1) ALTA DE SOLICITUD\n"
+            << "2) BUSCAR SOLICITUD\n"
+            << "3) SALIR\n"
+            << "OPCION: ";
+        cin >> opcion;
+
+        switch (opcion) {
+            case 1: {
+
+                string nombreAlumno, nombreCarrera, nombrePreparatoria;
+                float promedioPreparatoria;
+                cout << "NOMBRE ALUMNO: ";
+                cin.ignore();
+                getline(cin, nombreAlumno);
+                cout << "NOMBRE CARRERA: ";
+                getline(cin, nombreCarrera);
+                cout << "NOMBRE DE LA PREPA: ";
+                getline(cin, nombrePreparatoria);
+                cout << "PROMEDIO GENERAL: ";
+                cin >> promedioPreparatoria;
+                lista.altaSolicitud(Solicitud(nombreAlumno, nombreCarrera, nombrePreparatoria, promedioPreparatoria));
+                break;
+            }
+            case 2: {
+                string nombreAlumno;
+                cout << "NOMBRE ALUMNO: ";
+                cin.ignore();
+                getline(cin, nombreAlumno);
+                lista.buscarSolicitud(nombreAlumno);
+                break;
+            }
+            case 3: {
+                cout << "\nBAIS\n";
+                break;
+            }
+            default: {
+                cout << "\nOPCION INCORRECTA\n";
+            }
+        }
+    } while (opcion != 3);
+
+    return 0;
+}
